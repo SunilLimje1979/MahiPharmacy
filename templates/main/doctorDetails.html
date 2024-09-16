@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar-brand1 {
+            color: #FFFFFF;
+            font-size: 25px;
+        }
+        .doctor-profile-card, .clinic-profile-card, .stats-card, .users-card1 {
+            background-color: #71d4c895;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .tab-content > .tab-pane {
+            display: none;
+        }
+        .tab-content > .active {
+            display: block;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #109787;
+            color: white;
+            border: none;
+        }
+        .nav-tabs .nav-link {
+            color: #109787;
+        }
+        .user-list1 {
+            list-style-type: none;
+            padding: 0;
+        }
+        .user-list1 li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+     
+    <div class="container">
+        <div class="data-block1 mb-3">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <a class="navbar-brand1" href="{% url 'allRegistered' %}" >
+                    <i class="fas fa-arrow-left"></i> Doctor Details
+                </a>
+                <span class="doctor-count">Registered on: {{ doctor_data.createdon }}</span>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="doctor-profile-tab" data-bs-toggle="tab" data-bs-target="#doctor-profile" type="button" role="tab" aria-controls="doctor-profile" aria-selected="true">Doctor Profile</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="clinic-profile-tab" data-bs-toggle="tab" data-bs-target="#clinic-profile" type="button" role="tab" aria-controls="clinic-profile" aria-selected="false">Clinic Profile</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" aria-controls="stats" aria-selected="false">Stats</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">Users</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="doctor-profile" role="tabpanel" aria-labelledby="doctor-profile-tab">
+                <div class="doctor-profile-card">
+                    <h3>Doctor Profile</h3>
+                    <p>Name: {{ doctor_data.doctor_firstname }} {{ doctor_data.doctor_lastname }}</p>
+                    <p>Date of Birth: {{ doctor_data.doctor_dateofbirth }}</p>
+                    <p>Email: {{ doctor_data.doctor_email }}</p>
+                    <p>Phone Number: {{ doctor_data.doctor_mobileno }}</p>
+                    <p>Address: {{ doctor_data.doctor_address }}</p>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="clinic-profile" role="tabpanel" aria-labelledby="clinic-profile-tab">
+                <div class="clinic-profile-card">
+                    <h3>Clinic Profile</h3>
+                    {% if clinic_data %}
+                    <p>Clinic Name: {{ clinic_data.location_title }}</p>
+                    <p>Address: {{ clinic_data.location_address }}</p>
+                    {%else%}
+                      <p>The Registeration process is not completed</p>
+                    {%endif%}
+                </div>
+            </div>
+            <div class="tab-pane fade" id="stats" role="tabpanel" aria-labelledby="stats-tab">
+                <div class="stats-card">
+                    <h3>Stats</h3>
+                    <p>Consultations Done: {{ stats.consultations }}</p>
+                    <p>Total Patients: {{ stats.patient_linked }}</p>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                <div class="users-card1">
+                    <h3>Users</h3>
+                    {% if users %}
+                    <ul class="user-list1">
+                        {% for user in users %}
+                        <li>{{ forloop.counter }}. Name: {{ user.user_name }} &nbsp;&nbsp;&nbsp; Role: 
+                            {% if user.user_role == 1 %}
+                            Reception
+                            {% elif user.user_role == 2 %}
+                            Compounder
+                            {% elif user.user_role == 3 %}
+                            Accountant
+                            {% endif %}
+                            &nbsp;&nbsp;&nbsp; Phone Number: {{ user.user_mobileno }}</li>
+                        {% endfor %}
+                    </ul>
+                    {%else%}
+                      <p>No User Present</p>
+                    {%endif%}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>

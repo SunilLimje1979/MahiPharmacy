@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Display</title>
+    <style>
+        .qr-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .qr-image {
+            margin: 20px auto;
+        }
+        .download-btn {
+            background-color: #008373;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="qr-container">
+        {% comment %} <h5>QR Code for {{ url }}</h5> {% endcomment %}
+        <img class="qr-image" src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code">
+        <a class="download-btn" href="?download=true">Download QR Code</a>
+    </div>
+</body>
+</html>
+{% endblock content %}

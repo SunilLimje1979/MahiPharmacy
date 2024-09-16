@@ -1,0 +1,384 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Doctors</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-container {
+            width: 65%;  
+            margin-top: 1px;
+            padding: 2px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .form-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .navbar-brand1 {
+            color: #FFFFFF;
+            font-size: 25px;
+        }
+
+        .user-card {
+            background-color: #71d4c895;
+            border-radius: 7px;
+            margin-top: 5px;
+            padding: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .message-card {
+            background-color: #71d4c895;
+            border-radius: 7px;
+            margin-top: 5px;
+            padding: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .user-info {
+            font-size: 16px;
+            color: #0c0c0d;
+        }
+
+        .phone-number {
+            position: absolute;
+            left: 10px;
+        }
+
+        .doctor-name {
+            padding-left: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            height: calc(100vh - 60px);
+        }
+
+        .search-bar {
+            width: 100%;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .filter-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .filter-container {
+            display: none;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .user-list {
+            width: 35%;
+            max-height: 100%;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .user-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .data-block1 {
+            border: 1px solid #ddd;
+            padding: 7px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            background-color: #109787;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .doctor-count {
+            color: #FFFFFF;
+            font-size: 25px;
+        }
+
+         /* Custom CSS for select2 */
+         .select2-container--default .select2-selection--single {
+          border: 1px solid #ced4da;
+          border-radius: .25rem;
+          height: calc(2.50rem + 2px);
+          background-color: #fff;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.65rem + 2px);
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: calc(2.50rem + 2px);
+            width: 250px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #000 transparent transparent transparent;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 6px;
+            right: 8px;
+        }
+        .select2-container--default .select2-dropdown {
+            max-height: 750px; /* Adjust the maximum height as needed */
+            overflow-y: auto; /* Enable vertical scrollbar if needed */
+        }
+           
+    </style>
+</head>
+
+<body>
+    <div class="flex-container">
+        <div class="user-list">
+            <div class="data-block1">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <span class="navbar-brand1">Registered Doctors</span>
+                    <span class="doctor-count">Total: {{ all_doctors|length }}</span>
+                </div>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by name or phone number">
+                <i class="fa fa-filter filter-icon"></i>
+            </div>
+            {% include "includes/message.html" %}
+            <div class="filter-container" id="filterContainer">
+                <form id="filterForm">
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <select id="city" class="form-control">
+                            <option value="">Select City</option>
+                            {% for city in cities %}
+                                <option value="{{ city.id }}">{{ city.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" id="startDate" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" id="endDate" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </form>
+            </div>
+            <div id="doctorCards">
+                {% for doctor in all_doctors %}
+                <div class="user-card" data-doctor-id="{{ doctor.doctor_id }}" data-doctor-name="{{ doctor.doctor_firstname }} {{ doctor.doctor_lastname }}" data-doctor-phone="{{ doctor.doctor_mobileno }}" data-doctor-city="{{ doctor.doctor_cityid }}" data-doctor-registration-date="{{ doctor.created_on_formatted }}">
+                    <div class="user-info phone-number">{{ doctor.doctor_mobileno }}</div>
+                    <div class="user-info doctor-name">{{ doctor.doctor_firstname }} {{ doctor.doctor_lastname }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="form-container" id="getdoctordetails" style="display: none;">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function attachCardEventListeners() {
+            const doctorCards = document.querySelectorAll('.user-card');
+
+            doctorCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const doctorId = this.getAttribute('data-doctor-id');
+                    fetch(`/DrishtisAdmin/get_doctor_details/${doctorId}`)
+                        .then(response => response.text())
+                        .then(html => {
+                            document.getElementById('getdoctordetails').innerHTML = html;
+                            document.getElementById('getdoctordetails').style.display = 'block';
+                        })
+                        .catch(error => console.error('Error fetching doctor details:', error));
+                });
+            });
+        }
+
+        function applySearchFilter() {
+            const searchInput = document.getElementById('searchInput');
+            const filter = searchInput.value.toLowerCase();
+            const doctorCards = document.querySelectorAll('.user-card');
+
+            doctorCards.forEach(card => {
+                const name = card.getAttribute('data-doctor-name').toLowerCase();
+                const phone = card.getAttribute('data-doctor-phone').toLowerCase();
+
+                if (name.includes(filter) || phone.includes(filter)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', applySearchFilter);
+
+        const filterIcon = document.querySelector('.filter-icon');
+        filterIcon.addEventListener('click', function() {
+            const filterContainer = document.getElementById('filterContainer');
+            filterContainer.style.display = filterContainer.style.display === 'none' ? 'block' : 'none';
+        });
+
+        const filterForm = document.getElementById('filterForm');
+        filterForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const city = document.getElementById('city').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            $.ajax({
+                url: '{% url "filter_doctors" %}',
+                data: {
+                    city: city,
+                    startDate: startDate,
+                    endDate: endDate
+                },
+                dataType: 'json',
+                success: function(data) {
+                    const doctors = data.doctors;
+                    let doctorCardsHtml = '';
+
+                    if (doctors.length === 0) {
+                        doctorCardsHtml = '<div class="message-card">No doctors found</div>';
+                    } else {
+                        doctors.forEach(doctor => {
+                            doctorCardsHtml += `
+                                <div class="user-card" data-doctor-id="${doctor.doctor_id}" data-doctor-name="${doctor.doctor_firstname} ${doctor.doctor_lastname}" data-doctor-phone="${doctor.doctor_mobileno}" data-doctor-city="${doctor.doctor_cityid}" data-doctor-registration-date="${doctor.created_on_formatted}">
+                                    <div class="user-info phone-number">${doctor.doctor_mobileno}</div>
+                                    <div class="user-info doctor-name">${doctor.doctor_firstname} ${doctor.doctor_lastname}</div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    document.getElementById('doctorCards').innerHTML = doctorCardsHtml;
+
+                    attachCardEventListeners();
+                    applySearchFilter();
+                },
+                error: function(error) {
+                    console.error('Error fetching filtered doctors:', error);
+                }
+            });
+        }
+
+        attachCardEventListeners();
+    });
+</script>
+<script>
+    // Initialize Select2
+    $(document).ready(function() {
+        $('#city').select2();
+    });
+</script>
+
+</body>
+{% endblock content %}
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Button Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-3">
+    <!-- Dropdown Button -->
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Select an option
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="#" data-value="1">Option 1</a></li>
+            <li><a class="dropdown-item" href="#" data-value="2">Option 2</a></li>
+            <li><a class="dropdown-item" href="#" data-value="3">Option 3</a></li>
+        </ul>
+    </div>
+
+    <button id="submitBtn" class="btn btn-primary mt-3">Submit</button>
+</div>
+
+<script>
+    // Get references to the dropdown button and the submit button
+    const dropdownBtn = document.getElementById('dropdownMenuButton');
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    let selectedValue = '';
+
+    // Attach click event listeners to each dropdown item
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+            // Get the value and text of the selected item
+            selectedValue = this.getAttribute('data-value');
+            const selectedText = this.textContent;
+
+            // Update the dropdown button's label
+            dropdownBtn.textContent = selectedText;
+        });
+    });
+
+    // Attach click event to submit button
+    document.getElementById('submitBtn').addEventListener('click', function() {
+        if (selectedValue) {
+            // Pass the selected value to your script or perform an action
+            console.log("Selected value: " + selectedValue);
+            alert("You selected: " + selectedValue);
+        } else {
+            alert("Please select an option from the dropdown.");
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

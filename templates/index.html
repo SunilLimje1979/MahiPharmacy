@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="content container-fluid">
+   <div class="page-header">
+      
+      <!-- <div class="row">
+         <div class="col-sm-12">
+            <h3 class="page-title">Welcome Admin!</h3>
+            <ul class="breadcrumb">
+               <li class="breadcrumb-item active">Dashboard</li>
+            </ul>
+         </div>
+      </div> -->
+   </div>
+   <div class="row">
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+         <div class="card bg-one w-100">
+            <div class="card-body">
+               <div class="db-widgets d-flex justify-content-between align-items-center">
+                  <div class="db-icon">
+                     <i class="fa-solid fa-user-doctor"></i>
+                  </div>
+                  <div class="db-info">
+                     <h3>{{data.total_doctor_count}}</h3>
+                     <h6>Doctors</h6>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      
+
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+         <div class="card bg-two w-100">
+            <div class="card-body">
+               <div class="db-widgets d-flex justify-content-between align-items-center">
+                  <div class="db-icon">
+                     <i class="fa-solid fa-user"></i>
+                  </div>
+                  <div class="db-info">
+                     <h3>{{data.unique_patient_count}}</h3>
+                     <h6>Patients</h6>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+         <div class="card bg-three w-100">
+            <div class="card-body">
+               <div class="db-widgets d-flex justify-content-between align-items-center">
+                  <div class="db-icon">
+                     <i class="fa-solid fa-house-user"></i>
+                  </div>
+                  <div class="db-info">
+                     <h3>{%if data.pharma_status_counts.2 %} {{data.pharma_status_counts.2}} {%else%} 0 {%endif%}</h3>
+                     <h6>Home Delivery</h6>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+         <div class="card bg-one w-100">
+            <div class="card-body">
+               <div class="db-widgets d-flex justify-content-between align-items-center">
+                  <div class="db-icon">
+                     <i class="fa-solid fa-house-medical"></i>
+                  </div>
+                  <div class="db-info">
+                     <h3>{%if data.pharma_status_counts.1 %} {{data.pharma_status_counts.1}} {%else%} 0 {%endif%}</h3>
+                     <h6>Pickup</h6>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+         <div class="card bg-three w-100">
+            <div class="card-body">
+               <div class="db-widgets d-flex justify-content-between align-items-center">
+                  <div class="db-icon">
+                     <i class="fa-solid fa-xmark"></i>
+                  </div>
+                  <div class="db-info">
+                     <h3>{%if data.pharma_status_counts.3 %} {{data.pharma_status_counts.3}} {%else%} 0 {%endif%}</h3>
+                     <h6>Canceled</h6>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+         <div class="card bg-four w-100">
+            <div class="card-body">
+               <div class="db-widgets d-flex justify-content-between align-items-center">
+                  <div class="db-icon">
+                     <i class="fa-solid fa-thumbs-down"></i>
+                  </div>
+                  <div class="db-info">
+                     <h3>{%if data.pharma_status_counts.4 %} {{data.pharma_status_counts.4}} {%else%} 0 {%endif%}</h3>
+                     <h6>Rejected</h6>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+         <div class="card bg-four w-100">
+            <div class="card-body">
+               <div class="db-widgets d-flex justify-content-between align-items-center">
+                  <div class="db-icon">
+                     <i class="fa-solid fa-hourglass-end"></i>
+                  </div>
+                  <div class="db-info">
+                     <h3>{%if data.pharma_status_counts.5 %} {{data.pharma_status_counts.5}} {%else%} 0 {%endif%}</h3>
+                     <h6>Expired</h6>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+   </div> 
+
+    
+  
+   
+</div>
+
+{% endblock content %}
