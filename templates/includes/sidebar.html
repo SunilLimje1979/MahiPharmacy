@@ -20,6 +20,10 @@
                 <a href="{% url 'approvedDoctor' %}"><i class="fa-solid fa-person-circle-check"></i> <span>Approved Doctor</span></a>
             </li>
 
+            <li class="{% active_link 'showDeals' %}">
+                <a href="{% url 'showDeals' %}"><i class="fa-solid fa-envelopes-bulk"></i><span>Offers</span></a>
+            </li>
+
  
         </div>
     </div>

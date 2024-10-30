@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deals</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css"/>
+
+    <style>
+        .navbar {
+            background-color: #A52028;
+            color: white;
+            padding: 5px;
+            text-align: left;
+            font-size: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Card and grid layout */
+        .deal-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-5px); /* Subtle lift effect */
+        }
+
+        .deal-img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain; 
+            background-color: #f8f9fa;
+        }
+
+        .deal-content {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .deal-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .show-more-toggle {
+            color: #007bff;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .show-more-toggle:hover {
+            text-decoration: underline;
+        }
+
+        /* Ensure cards align responsively */
+        .deal-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+        }
+
+        .deal-actions i {
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+  
+
+        /* Responsive card grid */
+        @media (min-width: 768px) {
+            .col-lg-4, .col-md-6 {
+                display: flex;
+            }
+        }
+
+        p {
+            margin-bottom: 6px;
+        } 
+        
+         
+    </style>
+</head>
+<body>
+
+    <!-- Search bar -->
+    <div class="container">
+        <div class="input-group search-bar mb-4">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search deals by title, company, keywords, or mobile number">
+            <span class="input-group-text">
+                <i class="fas fa-heart filter-like" style="cursor: pointer; color: grey;" data-active="false"></i>
+                <i class="fas fa-star filter-interest" style="cursor: pointer; color: grey; margin-left: 10px;" data-active="false"></i>
+            </span>
+        </div>
+    </div>
+
+    <!-- Deals container -->
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="dealsContainer">
+            {% for deal in alldeals %}
+            <div class="col">
+                <div class="deal-card" data-deal="{{ deal|safe }}">
+                    <img src="https://mahi-durg.app/MahiAdmin/static/assets/Deal_images/{{ deal.DealContentURL_forWeb }}?t={{ timestamp }}" class="deal-img" alt="Deal Image">
+                    <div class="deal-content">
+                        <h6 class="mb-1">{{ deal.DealTitle }}</h6>
+                        <div class="deal-details">
+                            <p>{{ deal.CompanyName }}</p>
+                            <p><strong>#</strong> {{ deal.DealKeywords }}</p>
+                            <p>{{ deal.DealOwnerMobileNo }}</p>
+                            <p><a href="{{ deal.DealWebsiteURL }}" target="_blank">{{ deal.DealWebsiteURL }}</a></p>
+                        </div>
+                        <a href="javascript:void(0);" class="show-more-toggle">Show More</a>
+                        <div class="deal-actions">
+                            <i class="fas fa-heart like-icon" data-deal-id="{{ deal.Deal_id }}" data-dealaction-id="{{ deal.dealactionrecorder.DealAction_id }}" data-deal-like="{{ deal.dealactionrecorder.DealLike }}" style="color: grey;"></i>
+                            <i class="fas fa-star interest-icon" data-deal-id="{{ deal.Deal_id }}" data-dealaction-id="{{ deal.dealactionrecorder.DealAction_id }}" data-deal-interest="{{ deal.dealactionrecorder.DealInterest }}" style="color: grey;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div> 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // AJAX for Like and Interested actions
+        $(document).ready(function() {
+            // Handle Like action
+            $(".like-icon").on("click", function() {
+                const dealId = $(this).data("deal-id");
+                const dealActionId = $(this).data("dealaction-id");
+                let isLiked = $(this).data("deal-like") === 1; // Check if it's already liked
+                const actionType = isLiked ? "unlike" : "like"; // Toggle between like and unlike
+                const icon = $(this);
+
+                $.ajax({
+                    url: "{% url 'handle_deal_action' %}",  // Replace with your actual URL
+                    method: "POST",
+                    data: {
+                        deal_id: dealId,
+                        DealAction_id: dealActionId,
+                        action_type: actionType
+                    },
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                    success: function(response) {
+                        console.log(response);
+                        if (response.success) {
+                            if (isLiked) {
+                                icon.css("color", "grey");
+                                icon.data("deal-like", 0); // Update data attribute to unlike state
+                            } else {
+                                icon.css("color", "red");
+                                icon.data("deal-like", 1); // Update data attribute to like state
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Handle Interested action
+            $(".interest-icon").on("click", function() {
+                const dealId = $(this).data("deal-id");
+                const dealActionId = $(this).data("dealaction-id");
+                let isInterested = $(this).data("deal-interest") === 1; // Check if it's already interested
+                const actionType = isInterested ? "uninterest" : "interest"; // Toggle between interest and uninterest
+                const icon = $(this);
+
+                $.ajax({
+                    url: "{% url 'handle_deal_action' %}",  // Replace with your actual URL
+                    method: "POST",
+                    data: {
+                        deal_id: dealId,
+                        DealAction_id: dealActionId,
+                        action_type: actionType
+                    },
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                    success: function(response) {
+                        console.log(response);
+                        if (response.success) {
+                            if (isInterested) {
+                                icon.css("color", "grey");
+                                icon.data("deal-interest", 0); // Update data attribute to uninterest state
+                            } else {
+                                icon.css("color", "orange");
+                                icon.data("deal-interest", 1); // Update data attribute to interest state
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Search functionality
+            $("#searchInput").on("keyup", function() {
+                const searchValue = $(this).val().toLowerCase();
+                $(".deal-card").filter(function() {
+                    const dealData = $(this).data("deal").toString().toLowerCase();
+                    $(this).toggle(dealData.includes(searchValue));
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $(".show-more-toggle").on("click", function() {
+                const details = $(this).siblings(".deal-details");
+                const isExpanded = details.css("max-height") !== "0px";
+
+                if (isExpanded) {
+                    details.css("max-height", "0");
+                    $(this).text("Show More");
+                } else {
+                    details.css("max-height", details[0].scrollHeight + "px");
+                    $(this).text("Show Less");
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Update icon colors based on DealActionType value on page load
+            $(".like-icon").each(function() {
+                const actionType = $(this).data("deal-like");
+                if (actionType === 1) {
+                    $(this).css("color", "red");  // Set color to red if action type is 1 or higher
+                }
+            });
+    
+            $(".interest-icon").each(function() {
+                const actionType = $(this).data("deal-interest");
+                if (actionType === 1) {
+                    $(this).css("color", "orange");  // Set color to orange if action type is 2
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            let filterByLike = false;
+            let filterByInterest = false;
+
+            // Toggle "Like" filter
+            $(".filter-like").on("click", function() {
+                filterByLike = !filterByLike;  // Toggle the filter state
+                $(this).css("color", filterByLike ? "red" : "grey");  // Update icon color
+                $(this).data("active", filterByLike);
+                filterDeals();
+            });
+
+            // Toggle "Interest" filter
+            $(".filter-interest").on("click", function() {
+                filterByInterest = !filterByInterest;  // Toggle the filter state
+                $(this).css("color", filterByInterest ? "orange" : "grey");  // Update icon color
+                $(this).data("active", filterByInterest);
+                filterDeals();
+            });
+
+            // Filter deals based on search and icons
+            $("#searchInput").on("keyup", function() {
+                filterDeals();
+            });
+
+            function filterDeals() {
+                const searchValue = $("#searchInput").val().toLowerCase();
+
+                $(".deal-card").each(function() {
+                    const dealData = $(this).data("deal").toString().toLowerCase();
+                    const isLiked = $(this).find(".like-icon").data("deal-like") === 1;
+                    const isInterested = $(this).find(".interest-icon").data("deal-interest") === 1;
+
+                    // Apply filter conditions
+                    const matchesSearch = dealData.includes(searchValue);
+                    const matchesLike = !filterByLike || (filterByLike && isLiked);
+                    const matchesInterest = !filterByInterest || (filterByInterest && isInterested);
+
+                    $(this).toggle(matchesSearch && matchesLike && matchesInterest);
+                });
+              
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock content %}

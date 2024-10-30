@@ -246,6 +246,50 @@ def filter_patients(request):
     
     return JsonResponse(response_data)
 
+from time import time
+###########################Deal#######################
+def showDeals(request):
+    if('user' in request.session):
+        res = requests.post('http://13.233.211.102/masters/api/get_active_deals_by_visible_to/',json={"visible_to":"2","user_id":request.session.get('user').get('pharmacist_id')}) #here '2' pass as a string means Pharmacy
+        print(res.text)
+        if(res.json().get('message_code')==1000):
+            alldeals = res.json().get('message_data')
+        
+        else:
+            alldeals = []
+        
+        return render(request,'main/showDeals.html',{'alldeals':alldeals,"timestamp":int(time())})
+    
+    else:
+        return redirect(Login)
+
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def handle_deal_action(request):
+    if request.method == 'POST':
+        deal_id = request.POST.get('deal_id')
+        DealAction_id = request.POST.get('DealAction_id')
+        action_type = request.POST.get('action_type')
+         
+        print(deal_id,DealAction_id,action_type)
+        
+        # Make request to external API
+        response = requests.post(
+            'http://13.233.211.102/masters/api/update_deal_action_type_by_DealactionId/',
+            json={"deal_id":deal_id,"dealaction_id":DealAction_id,"dealactiontype":action_type}
+        )
+        print(response.text)
+
+        # Check response status
+        if response.status_code == 200 and response.json().get('message_code') == 1000:
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "message": "Unable to perform action."})
+    
+    return JsonResponse({"success": False, "message": "Invalid request method."})
+
+
+
 
 
 

@@ -19,5 +19,9 @@ urlpatterns = [
     path('update_pharma_status/',update_pharma_status,name='update_pharma_status'),
     path('get_pdf_url/',get_pdf_url,name='get_pdf_url'),
     path('filter_patients/',filter_patients,name='filter_patients'),
+
+    #####################Deal#############################
+    path('showDeals/',showDeals,name='showDeals'),
+    path('handle_deal_action/',handle_deal_action, name='handle_deal_action'),
     
 ]
